@@ -34,12 +34,60 @@ void writeSolution(FILE *outputFP, int candidate, int dimension){
 	fprintf(outputFP, "\n");
 }
 
+int* findBoardCandidates(int **referenceBoard, int dimension){
+	int i, j, chancellorLocation, *boardCandidates = (int *) malloc (sizeof(int) * dimension);
+
+	for (i = 0; i < dimension; i++){
+		chancellorLocation = 0;
+		for (j = 0; j < dimension; j++){
+			if (referenceBoard[i][j] == 1){
+				chancellorLocation = j + 1;
+				break;
+			}
+		}
+		boardCandidates[i] = chancellorLocation;
+	}
+	return boardCandidates;
+}
+
+int acceptCandidate(int candidate, int move, int dimension, int option[][dimension+2], int nopts[]){
+	int i;
+
+	for(i = move - 1; i >= 1; i--){	 
+		// check for same column
+		if (candidate == option[i][nopts[i]])
+			return 0;
+
+		if (i == move - 1){
+			// check for horizontal L going left
+			if (candidate > 2 && option[i][nopts[i]] == candidate - 2)
+				return 0;
+
+			// check for horizontal L going right
+			if (dimension - candidate > 1 && option[i][nopts[i]] == candidate + 2)
+				return 0;
+		}
+
+		if (i == move - 2){
+			// check for vertical L going left
+			if (candidate > 1 && option[i][nopts[i]] == candidate - 1)
+				return 0;
+
+			// check for vertical L going right
+			if (dimension - candidate > 0 && option[i][nopts[i]] == candidate + 1)
+				return 0;
+		}
+	}
+
+	return 1;
+}
+
 int solveNChancellors(FILE *outputFP, int **referenceBoard, int dimension){
 	int start, move;
 	int nopts[dimension+2]; // array of top of stacks
 	int option[dimension+2][dimension+2]; // array of stacks of options
-	int i, candidate;
-	int solutionsCount = 0;
+	int i, candidate, solutionsCount = 0;
+	int *boardCandidates = findBoardCandidates(referenceBoard, dimension);
 
 	move = start = 0; 
 	nopts[start]= 1;
@@ -61,35 +109,14 @@ int solveNChancellors(FILE *outputFP, int **referenceBoard, int dimension){
 				fprintf(outputFP, "\n");
 			}
 			else {
-				for(candidate=dimension;candidate>=1;candidate--){
-					for(i=move-1;i>=1;i--){	 
-						// check for same column
-						if (candidate == option[i][nopts[i]])
-							break;
-
-						if (i == move - 1){
-							// check for horizontal L going left
-							if (candidate > 2 && option[i][nopts[i]] == candidate - 2)
-								break;
-
-							// check for horizontal L going right
-							if (dimension - candidate > 1 && option[i][nopts[i]] == candidate + 2)
-								break;
-						}
-
-						if (i == move - 2){
-							// check for vertical L going left
-							if (candidate > 1 && option[i][nopts[i]] == candidate - 1)
-								break;
-
-							// check for vertical L going right
-							if (dimension - candidate > 0 && option[i][nopts[i]] == candidate + 1)
-								break;
-						}
+				if (boardCandidates[move - 1] > 0){	// if there's initially placed chancellor, evaluate it
+					if(acceptCandidate(boardCandidates[move - 1], move, dimension, option, nopts))
+						option[move][++nopts[move]] = boardCandidates[move - 1];
+				} else {	// no initially placed chancellor; try all possible candidates
+					for(candidate=dimension;candidate>=1;candidate--){
+						if(acceptCandidate(candidate, move, dimension, option, nopts))
+							option[move][++nopts[move]] = candidate;
 					}
-
-					if(!(i>=1))
-						option[move][++nopts[move]] = candidate;
 				}
 			}
 		}
@@ -99,5 +126,6 @@ int solveNChancellors(FILE *outputFP, int **referenceBoard, int dimension){
 		}
 	}
 
+	free(boardCandidates);
 	return solutionsCount;
 }
