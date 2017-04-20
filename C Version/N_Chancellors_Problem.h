@@ -24,10 +24,63 @@ void freeBoardMemory(int **board, int dimension){
 	free(board);
 }
 
+int checkValidInput(int **board, int dimension, int x, int y){
+	int i, j;
+
+	// check vertical
+	for (i = 0; i < dimension; i++){
+		if (i != x && (board[i][y]) == 1){
+			
+			return 0;
+		}
+	}
+
+	// check horizontal
+	for (j = 0; j < dimension; j++){
+		if (j != y && (board[x][j]) == 1){
+			return 0;
+		}
+	}
+
+	// check knight's moves in upper left
+	if (x > 0 && y > 1 && board[x-1][y-2] == 1){
+		return 0;
+	}
+	if (x > 1 && y > 0 && board[x-2][y-1] == 1){
+		return 0;
+	}
+
+	// check knight's moves in upper right
+	if (x > 0 && dimension - y > 2 && board[x-1][y+2] == 1){
+		return 0;
+	}
+	if (x > 1 && dimension - y > 1 && board[x-2][y+1] == 1){
+		return 0;
+	}
+
+	// check knight's moves in lower left
+	if (dimension - x > 1 && y > 1 && board[x+1][y-2] == 1){
+		return 0;
+	}
+	if (dimension - x > 2 && y > 0 && board[x+2][y-1] == 1){
+		return 0;
+	}
+			
+	// check knight's moves in lower right
+	if (dimension - x > 1 && dimension - y > 2 && board[x+1][y+2] == 1){
+		return 0;
+	}
+	if (dimension - x > 2 && dimension - y > 1 && board[x+2][y+1] == 1){
+		return 0;
+	}
+
+	return 1;
+}
+
 void writeSolution(FILE *outputFP, int candidate, int dimension){
 	int i;
 
-	for (int i = 1; i <= dimension; i++){
+	for (i = 1; i <= dimension; i++){
 		fprintf(outputFP, i == candidate? "1 " : "0 ");
 	}
 
@@ -82,12 +135,29 @@ int acceptCandidate(int candidate, int move, int dimension, int option[][dimensi
 	return 1;
 }
 
+int validateInitialBoard(int **referenceBoard, int dimension){
+	int i, j;
+
+	for (i = 0; i < dimension; i++){
+		for (j = 0; j < dimension; j++){
+			if (referenceBoard[i][j] == 1 && !checkValidInput(referenceBoard, dimension, i, j)){
+				return 0;
+			}
+		}
+	}
+
+	return 1;
+}
+
 int solveNChancellors(FILE *outputFP, int **referenceBoard, int dimension){
 	int start, move;
 	int nopts[dimension+2]; // array of top of stacks
 	int option[dimension+2][dimension+2]; // array of stacks of options
 	int i, candidate, solutionsCount = 0;
 	int *boardCandidates = findBoardCandidates(referenceBoard, dimension);
+
+	if (!validateInitialBoard(referenceBoard, dimension))
+		return 0;
 
 	move = start = 0; 
 	nopts[start]= 1;
