@@ -35,12 +35,14 @@ public class SolverPanel extends JPanel implements ActionListener {
 	private int[][] initialBoard;
 	
 	private ImageIcon chancellor = new ImageIcon("res/icon.png");
+	private NChancellorSolver NChancySolver;
 	
 	public SolverPanel(MenuPanel menu, int boardSize, int[][] initial) {
 		this.size = boardSize;
 		this.menu = menu;
 		board = new int[size][size];
 		initialBoard = new int[size][size];
+		this.NChancySolver = new NChancellorSolver();
 		setLayout(new BorderLayout());
 		
 		boardPanel = new JPanel();
@@ -55,13 +57,6 @@ public class SolverPanel extends JPanel implements ActionListener {
 				System.arraycopy(initial[x], 0, initialBoard[x], 0, initial[x].length);
 			}
 		}
-
-		for (int a = 0; a < size; a += 1) {
-				for (int b = 0; b < size; b += 1) {
-					System.out.print(initialBoard[a][b] + " ");
-				}
-				System.out.println("\n");
-			}
 		
 		for (int x = 0; x < size; x += 1) {
 			for (int y = 0; y < size; y += 1) {
@@ -159,20 +154,16 @@ public class SolverPanel extends JPanel implements ActionListener {
 					}
 				}
 			}
-			
-			for (int a = 0; a < size; a += 1) {
-				for (int b = 0; b < size; b += 1) {
-					System.out.print(board[a][b] + " ");
-				}
-				System.out.println("\n");
-			}
+			// if the board is solved
+				Reader.showSolution();
+		   // else
+// 				TODO: show prompt "Not yet solved! Bubu"
 		}
 		
 		if (e.getSource() == giveUp) {
 			
-			
-			new NChancellorSolver().solveNChancellors(initialBoard);
-
+			NChancySolver.solveNChancellors(initialBoard);
+			Reader.showSolution();
 			for (int a = 0; a < size; a += 1) {
 				for (int b = 0; b < size; b += 1) {
 					System.out.print(board[a][b] + " ");
