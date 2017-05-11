@@ -164,6 +164,8 @@ public class SolverPanel extends JPanel implements ActionListener {
 				}
 			}
 			
+			new NChancellorSolver().solveNChancellors(board);
+
 			for (int a = 0; a < size; a += 1) {
 				for (int b = 0; b < size; b += 1) {
 					System.out.print(board[a][b] + " ");
