@@ -32,6 +32,7 @@ public class SolverPanel extends JPanel implements ActionListener {
 	
 	private JButton[][] tiles;
 	private int[][] board;
+	private int[][] initialBoard;
 	
 	private ImageIcon chancellor = new ImageIcon("res/icon.png");
 	
@@ -39,6 +40,7 @@ public class SolverPanel extends JPanel implements ActionListener {
 		this.size = boardSize;
 		this.menu = menu;
 		board = new int[size][size];
+		initialBoard = new int[size][size];
 		setLayout(new BorderLayout());
 		
 		boardPanel = new JPanel();
@@ -47,6 +49,19 @@ public class SolverPanel extends JPanel implements ActionListener {
 		boardPanel.setPreferredSize(new Dimension(400, 400));
 		
 		tiles = new JButton[size][size];
+
+		if (initial != null){
+			for (int x = 0; x < size; x += 1){	// copy the contents of initial to initialBoard
+				System.arraycopy(initial[x], 0, initialBoard[x], 0, initial[x].length);
+			}
+		}
+
+		for (int a = 0; a < size; a += 1) {
+				for (int b = 0; b < size; b += 1) {
+					System.out.print(initialBoard[a][b] + " ");
+				}
+				System.out.println("\n");
+			}
 		
 		for (int x = 0; x < size; x += 1) {
 			for (int y = 0; y < size; y += 1) {
@@ -154,17 +169,9 @@ public class SolverPanel extends JPanel implements ActionListener {
 		}
 		
 		if (e.getSource() == giveUp) {
-			for (int a = 0; a < size; a += 1) {
-				for (int b = 0; b < size; b += 1) {
-					if (tiles[a][b].getIcon() != null) {
-						board[a][b] = 1;
-					} else {
-						board[a][b] = 0;
-					}
-				}
-			}
 			
-			new NChancellorSolver().solveNChancellors(board);
+			
+			new NChancellorSolver().solveNChancellors(initialBoard);
 
 			for (int a = 0; a < size; a += 1) {
 				for (int b = 0; b < size; b += 1) {
