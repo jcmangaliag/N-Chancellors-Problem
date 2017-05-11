@@ -35,14 +35,14 @@ public class SolverPanel extends JPanel implements ActionListener {
 	private int[][] initialBoard;
 	
 	private ImageIcon chancellor = new ImageIcon("res/icon.png");
-	private NChancellorSolver NChancySolver;
+	private NChancellorSolver nChancySolver;
 	
 	public SolverPanel(MenuPanel menu, int boardSize, int[][] initial) {
 		this.size = boardSize;
 		this.menu = menu;
 		board = new int[size][size];
 		initialBoard = new int[size][size];
-		this.NChancySolver = new NChancellorSolver();
+		this.nChancySolver = new NChancellorSolver();
 		setLayout(new BorderLayout());
 		
 		boardPanel = new JPanel();
@@ -154,25 +154,27 @@ public class SolverPanel extends JPanel implements ActionListener {
 					}
 				}
 			}
-			// if the board is solved
+
+			if (nChancySolver.filledRows(board, size) && nChancySolver.validateInitialBoard(board, size)){
+				nChancySolver.solveNChancellors(initialBoard);
 				Reader.showSolution();
-		   // else
-// 				TODO: show prompt "Not yet solved! Bubu"
+				System.out.println("solved na! di Bubu");
+			} else {
+				// TODO: show prompt "Not yet solved! Bubu"
+				System.out.println("Not yet solved! Bubu");
+			}
+		   
 		}
 		
 		if (e.getSource() == giveUp) {
 			
-			NChancySolver.solveNChancellors(initialBoard);
+			nChancySolver.solveNChancellors(initialBoard);
+			System.out.println("Di mo kaya? Bubu");
 			Reader.showSolution();
-			for (int a = 0; a < size; a += 1) {
-				for (int b = 0; b < size; b += 1) {
-					System.out.print(board[a][b] + " ");
-				}
-				System.out.println("\n");
-			}
 		}
 		
 		if (e.getSource() == back) {
+			System.out.println("Quitter ka Bubu");
 			Container c = menu.getNChancy().getFrame().getContentPane();
 			CardLayout cl = (CardLayout) c.getLayout();
 			
