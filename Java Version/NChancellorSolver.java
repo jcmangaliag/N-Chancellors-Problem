@@ -4,7 +4,7 @@ import java.io.FileWriter;
 
 public class NChancellorSolver {
 
-	public static int[] findBoardCandidates (int[][] referenceBoard, int dimension) {
+	public int[] findBoardCandidates (int[][] referenceBoard, int dimension) {
 		int chancellorLocation;
 		int[] boardCandidates = new int[dimension];
 
@@ -22,7 +22,7 @@ public class NChancellorSolver {
 		return boardCandidates;
 	}
 
-	public static boolean checkValidInput(int[][] board, int dimension, int x, int y){
+	public boolean checkValidInput(int[][] board, int dimension, int x, int y){
 		int i, j;
 
 		// check vertical
@@ -74,7 +74,7 @@ public class NChancellorSolver {
 		return true;
 	}
 
-	public static boolean validateInitialBoard(int[][] referenceBoard, int dimension){
+	public boolean validateInitialBoard(int[][] referenceBoard, int dimension){
 		for (int i = 0; i < dimension; i++){
 			for (int j = 0; j < dimension; j++){
 				if (referenceBoard[i][j] == 1 && !checkValidInput(referenceBoard, dimension, i, j)){
@@ -86,7 +86,7 @@ public class NChancellorSolver {
 		return true;
 	}
 
-	public static void writeSolution(BufferedWriter outputWriter, int candidate, int dimension) throws Exception {
+	public void writeSolution(BufferedWriter outputWriter, int candidate, int dimension) throws Exception {
 		for (int i = 1; i <= dimension; i++){
 			outputWriter.write(i == candidate? "1 " : "0 ");
 		}
@@ -94,7 +94,7 @@ public class NChancellorSolver {
 		outputWriter.write("\n");
 	}
 
-	public static boolean acceptCandidate(int candidate, int move, int dimension, int[][] option, int nopts[]){
+	public boolean acceptCandidate(int candidate, int move, int dimension, int[][] option, int nopts[]){
 		for(int i = move - 1; i >= 1; i--){	 
 			// check for same column
 			if (candidate == option[i][nopts[i]]){
@@ -130,7 +130,7 @@ public class NChancellorSolver {
 	}
 
 
-	public static void solveNChancellors(int[][] referenceBoard) {
+	public void solveNChancellors(int[][] referenceBoard) {
 		try {
 			BufferedWriter outputWriter = new BufferedWriter(new FileWriter("output.txt"));
 
@@ -140,14 +140,13 @@ public class NChancellorSolver {
 			int i, candidate, solutionsCount = 0;
 			int[] boardCandidates = findBoardCandidates(referenceBoard, dimension);
 
-			if (!validateInitialBoard(referenceBoard, dimension)){
-				outputWriter.write("No Solution\n");
-			} else {
+			outputWriter.write("size=" + dimension + "\n\n");
+
+			if (validateInitialBoard(referenceBoard, dimension)){
 				move = start = 0; 
 				nopts[start]= 1;
 				
 				while (nopts[start] >0){ // while dummy stack is not empty
-				
 					if(nopts[move]>0){ 
 					
 						move++;
@@ -179,9 +178,9 @@ public class NChancellorSolver {
 						nopts[move]--;
 					}
 				}
-				outputWriter.write(String.valueOf(solutionsCount));
 			}
 
+			outputWriter.write("solutionsCount=" + solutionsCount);
 			outputWriter.close();
 
 		} catch (Exception e){
@@ -189,10 +188,4 @@ public class NChancellorSolver {
 		}
 		
 	}
-
-	/*public static void main(String[] args){
-		int[][] sampleinitBoard = new int[4][4];
-
-		solveNChancellors(sampleinitBoard);
-	}*/
 }
