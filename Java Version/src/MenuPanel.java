@@ -4,18 +4,23 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -46,12 +51,22 @@ public class MenuPanel extends JPanel implements ActionListener {
 	
 	private NChancy nchancy;
 	
+	BufferedImage background = null;
+	
 	public MenuPanel(NChancy nchancy) {
 		setLayout(new BorderLayout());
 		fileChooser = new JFileChooser();
 		this.nchancy = nchancy;
 		
+		try {
+			background = ImageIO.read(new File("../res/menuBG.png"));
+			
+		} catch(Exception e) {
+			System.out.println("Image failed to load");
+		}
+		
 		boardSizePanel = new JPanel();
+//		boardSizePanel.setBackground(new Color(129,212,250));
 		boardSizePanel.setPreferredSize(new Dimension(500, 150));
 		boardSizePanel.setBorder(new EmptyBorder(100,0,0,0));
 		
@@ -63,18 +78,22 @@ public class MenuPanel extends JPanel implements ActionListener {
 		boardSizePanel.add(boardSize);
 		
 		top = new JPanel();
+//		top.setBackground(new Color(129,212,250));
 		top.setLayout(new BorderLayout());
 		top.setPreferredSize(new Dimension(500,200));
 		top.add(boardSizePanel, BorderLayout.SOUTH);
 		
 		initialBoard = new JPanel();
+//		initialBoard.setBackground(new Color(129,212,250));
 		initialBoard.setBorder(new EmptyBorder(20,200,200,200));
 		initialBoard.setPreferredSize(new Dimension(400,500));
 		
 		initialBoardLabel = new JLabel("Initial Board: ");
-		emptyBoard = new JButton("CREATE");
+		emptyBoard = new JButton();
+		emptyBoard.setIcon(new ImageIcon("../res/empty.png"));
 		emptyBoard.setPreferredSize(new Dimension(150,100));
-		loadBoard = new JButton("LOAD");
+		loadBoard = new JButton();
+		loadBoard.setIcon(new ImageIcon("../res/load.png"));
 		loadBoard.setPreferredSize(new Dimension(150,100));
 		
 		emptyBoard.addActionListener(this);
@@ -85,11 +104,13 @@ public class MenuPanel extends JPanel implements ActionListener {
 		initialBoard.add(loadBoard);
 		
 		back = new JPanel();
+//		back.setBackground(new Color(129,212,250));
 		back.setLayout(new BorderLayout());
 		back.setPreferredSize(new Dimension(200,600));
 		back.setBorder(new EmptyBorder(0,30,30,30));
 		
-		backButton = new JButton("BACK");
+		backButton = new JButton();
+		backButton.setIcon(new ImageIcon("../res/back.png"));
 		backButton.setPreferredSize(new Dimension(150,40));
 		
 		backButton.addActionListener(new ActionListener() {
@@ -105,7 +126,14 @@ public class MenuPanel extends JPanel implements ActionListener {
 		});
 		back.add(backButton, BorderLayout.SOUTH);
 		right = new JPanel();
+//		right.setBackground(new Color(129,212,250));
 		right.setPreferredSize(new Dimension(150,600));
+		
+		top.setOpaque(false);
+		initialBoard.setOpaque(false);
+		back.setOpaque(false);
+		right.setOpaque(false);
+		boardSizePanel.setOpaque(false);
 		
 		add(top, BorderLayout.NORTH);
 		add(initialBoard, BorderLayout.CENTER);
@@ -116,13 +144,19 @@ public class MenuPanel extends JPanel implements ActionListener {
 	public NChancy getNChancy() {
 		return this.nchancy;
 	}
+	
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(background, 0, 0, null);
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == emptyBoard) {
 			
-			if (boardSize.getText().equals("")) {
+			if (boardSize.getText().equals("") || Integer.parseInt(boardSize.getText()) <= 0) {
 				System.out.println("Please enter board size");
+				JOptionPane.showMessageDialog(null, "Please enter a valid board size");
 			} else {
 				String size = this.boardSize.getText();
 				int boardsize = Integer.parseInt(size);
@@ -202,4 +236,5 @@ public class MenuPanel extends JPanel implements ActionListener {
 			}
 		}
 	}
+
 }

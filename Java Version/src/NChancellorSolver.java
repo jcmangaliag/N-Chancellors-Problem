@@ -85,6 +85,20 @@ public class NChancellorSolver {
 
 		return true;
 	}
+	
+	public boolean filledRows(int[][] board, int dimension){
+		for (int i = 0; i < dimension; i++){
+			for (int j = 0; j < dimension; j++){
+				if (board[i][j] == 1){
+					break;
+				} else if (j == dimension - 1 && board[i][j] == 0){
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
 
 	public void writeSolution(BufferedWriter outputWriter, int candidate, int dimension) throws Exception {
 		for (int i = 1; i <= dimension; i++){

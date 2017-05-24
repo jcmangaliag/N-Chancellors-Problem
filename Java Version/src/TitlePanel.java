@@ -3,13 +3,21 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
 
 @SuppressWarnings("serial")
 public class TitlePanel extends JPanel {
@@ -24,12 +32,24 @@ public class TitlePanel extends JPanel {
 	private JPanel top;
 	private JPanel bottom;
 	
+	private static BufferedImage background = null;
+	
+	private ImageIcon startBtn = new ImageIcon("../res/start.png");
+	private ImageIcon quitBtn = new ImageIcon("../res/quit.png");
+	
 	public TitlePanel(NChancy nchancy) {
 		setLayout(new BorderLayout());
 		
+		try {
+			background = ImageIO.read(new File("../res/mainBG.png"));
+			
+		} catch(Exception e) {
+			System.out.println("Image failed to load");
+		}
+		
+		
 		title = new JPanel();
 		title.setPreferredSize(new Dimension(500,300));
-		title.setBackground(Color.red);
 		
 		top = new JPanel();
 		top.setPreferredSize(new Dimension(500,100));
@@ -43,9 +63,18 @@ public class TitlePanel extends JPanel {
 		buttonPanel = new JPanel();
 		buttonPanel.setPreferredSize(new Dimension(500,250));
 		buttonPanel.setBorder(new EmptyBorder(10,0,0,0));
-		
-		start = new JButton("START");
+
+		start = new JButton();
 		start.setPreferredSize(new Dimension(150,50));
+		start.setOpaque(true);
+		start.setIcon(startBtn);
+		
+		title.setOpaque(false);
+		top.setOpaque(false);
+		left.setOpaque(false);
+		right.setOpaque(false);
+		bottom.setOpaque(false);
+		buttonPanel.setOpaque(false);
 		
 		start.addActionListener(new ActionListener() {
 
@@ -58,8 +87,9 @@ public class TitlePanel extends JPanel {
 			
 		});
 		
-		quit = new JButton("QUIT");
+		quit = new JButton();
 		quit.setPreferredSize(new Dimension(150,50));
+		quit.setIcon(quitBtn);
 		quit.addActionListener(new ActionListener() {
 
 			@Override
@@ -79,8 +109,11 @@ public class TitlePanel extends JPanel {
 		add(bottom, BorderLayout.SOUTH);
 		add(title, BorderLayout.CENTER);
 		add(buttonPanel, BorderLayout.SOUTH);
-		
-		
+	}
+	
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(background, 0, 0, null);
 	}
 
 }
